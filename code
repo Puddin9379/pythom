@@ -1,0 +1,108 @@
+import pygame
+import math
+import sys
+
+# Inicialização do pygame
+pygame.init()
+
+# Configurações da tela
+tela = pygame.display.set_mode((800, 600))
+pygame.display.set_caption('Ohm Vs Sobrecargas!')
+tela.fill((255, 255, 255))
+pygame.display.flip()
+
+# Posição inicial do jogador
+(x, y) = (400, 300)
+movW = 0.5
+movD = 0.5
+movA = 0.5
+movS = 0.5
+movB = 1
+fps = 60
+(xB, yB) = (0, 0)
+running = True
+
+# Posição inicial do inimigo
+enemy_x = 35
+enemy_y = 35
+enemy_speed = 0.3  # Velocidade do inimigo]
+
+clock = pygame.time.Clock()
+
+class Player(pygame.sprite.Sprite):
+    def __init__(self):
+        super().__init__()
+        self.image = pygame.Surface((100,100))
+        self.image.fill((255,255,255))
+        self.rect = self.image.get_rect(center = (400,300))
+
+    def update(self):
+        self.rect.center = pygame.mouse.get_pos()  
+
+while running:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            running = False
+            clock.tick(30)
+
+    # MOVIMENTAÇÃO DO JOGADOR
+    keys = pygame.key.get_pressed()
+    if keys[pygame.K_LEFT] or keys[ord('a')]:
+        x -= movA
+    if keys[pygame.K_RIGHT] or keys[ord('d')]:
+        x += movD
+    if keys[pygame.K_DOWN] or keys[ord('s')]:
+        y += movS
+    if keys[pygame.K_UP] or keys[ord('w')]:
+        y -= movW
+
+    # Atualizar a posição do jogador
+    player = pygame.draw.rect(tela, (255, 255, 255), (x, y, 45, 45))
+
+    # MOVIMENTAÇÃO DO INIMIGO EM DIREÇÃO AO JOGADOR
+    angle = math.atan2(y - enemy_y, x - enemy_x)
+    enemy_x += enemy_speed * math.cos(angle)
+    enemy_y += enemy_speed * math.sin(angle)
+
+    # Atualizar a posição do inimigo
+    enemy = pygame.draw.rect(tela, (255, 0, 0), (enemy_x, enemy_y, 45, 45))
+
+    # Verificar colisão entre jogador e inimigo
+    if player.colliderect(enemy):
+        running = False
+
+    # COLISÃO COM A BORDA DA TELA
+    limiteW = pygame.draw.rect(tela, (0, 0, 0), (0, 0, 800, 1))
+    limiteD = pygame.draw.rect(tela, (0, 0, 0), (799, 0, 1, 600))
+    limiteA = pygame.draw.rect(tela, (0, 0, 0), (0, 0, 1, 600))
+    limiteS = pygame.draw.rect(tela, (0, 0, 0), (0, 599, 800, 1))
+    if player.colliderect(limiteW):
+        movW = 0
+    else:
+        movW = 0.5
+    if player.colliderect(limiteA):
+        movA = 0
+    else:
+        movA = 0.5
+    if player.colliderect(limiteD):
+        movD = 0
+    else:
+        movD = 0.5
+    if player.colliderect(limiteS):
+        movS = 0
+    else:
+        movS = 0.5
+
+    # Atualizar a tela
+    pygame.display.update()
+    tela.fill((0, 0, 0))
+    
+    #projeteis piu piu (joaquim)
+    playerteste = Player()
+    playerteste_group = pygame.sprite.Group
+    playerteste_group.add(playerteste)
+    playerteste_group.update()
+
+
+# Finalizar o pygame
+pygame.quit()
