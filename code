@@ -122,7 +122,7 @@ while running:
     
 #projeteis piu piu (joaquim) PT 2
     if event.type == pygame.MOUSEBUTTONDOWN:
-        bullet_group.add(player.create_bullet())
+        bullet_group.add(playerteste.create_bullet())
 
 # Finalizar o pygame
 pygame.quit()
